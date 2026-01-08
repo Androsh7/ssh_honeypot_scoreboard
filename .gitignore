@@ -1,0 +1,8 @@
+# VSCode
+.vscode/
+
+# Python
+.venv/
+
+# Project
+ssh-honeypot.log
