@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssh_honeypot_scoreboard"
+version = "0.1.0"
+description = "Script for generating summaries from the logs of https://github.com/droberson/ssh-honeypot"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+dependencies = [
+    "requests"
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "pytest",
+    "responses",
+    "ruff",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "E",    # Pycodestyle errors
+    "F",    # Pyflakes
+    "I",    # Isort
+    "UP",   # Pyupgrade
+    "D",    # Docstring on every module, class, function, method
+    "N",    # pep8 naming
+    "TID",  # Banned relative imports
+    "INP",  # Every package directory has an __init__.py
+    "ERA",  # No commented-out code
+    "B",    # Bugbear: likely bugs and design problems
+    "SIM",  # Simplify: needlessly complex code
+    "RUF",  # Ruff-specific rules
+    "PT",   # Pytest style
+    "PTH",  # Prefer pathlib over os.path
+]
+ignore = [
+    "D415", # No trailing period on the summary line
+    "D104", # __init__.py has no docstring
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "D",       # Docstring on every module, class, function, method
+    "INP001",  # __init__.py in every directory 
+    "PLR2004", # No magic values
+    "S101"     # Using assert is not allowed
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.setuptools]
+py-modules = ["ssh_honeypot_scoreboard"]

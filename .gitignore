@@ -3,6 +3,13 @@
 
 # Python
 .venv/
+__pycache__/
+*.egg-info
+
+# UV
+uv.lock
 
 # Project
-ssh-honeypot.log
+*.log
+*.cache
+*.json
