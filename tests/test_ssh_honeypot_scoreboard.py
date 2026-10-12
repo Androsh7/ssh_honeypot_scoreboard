@@ -374,3 +374,23 @@ def test_load_excludes_loopback_attempts(tmp_path: Path) -> None:
     log = HoneypotLog.load(log_path)
 
     assert [line.ip for line in log.lines] == ["203.0.113.9"]
+
+
+def test_main_excludes_requested_ips_in_addition_to_loopback(tmp_path: Path) -> None:
+    """Check that addresses passed on the command line are excluded alongside 127.0.0.1"""
+    log_path = tmp_path / "honeypot.log"
+    log_path.write_text(
+        "[Mon Aug 11 00:34:57 2025] 127.0.0.1 root local\n"
+        "[Mon Aug 11 00:35:57 2025] 203.0.113.9 admin mine\n"
+        "[Mon Aug 11 00:36:57 2025] 198.51.100.13 pi remote\n",
+        encoding="utf-8",
+    )
+    cache_path = tmp_path / "ip-location.cache"
+    cache_path.write_text(json.dumps({"198.51.100.13": {"ip": "198.51.100.13"}}), encoding="utf-8")
+    output_path = tmp_path / "scoreboard.json"
+    with responses.RequestsMock():
+        exit_code = main(["-i", str(log_path), "-c", str(cache_path), "-o", str(output_path), "-x", "203.0.113.9"])
+
+    assert exit_code == 0
+    saved = json.loads(output_path.read_text(encoding="utf-8"))
+    assert [entry["ip"] for entry in saved["top_ips"]] == ["198.51.100.13"]

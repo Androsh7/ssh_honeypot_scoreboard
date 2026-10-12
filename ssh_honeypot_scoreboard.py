@@ -474,6 +474,14 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default=DEFAULT_TOP_PASSWORDS_PER_IP,
         help="How many passwords to list per address",
     )
+    parser.add_argument(
+        "--exclude-ip",
+        "-x",
+        action="append",
+        default=sorted(EXCLUDED_IPS),
+        metavar="IP",
+        help="An address whose attempts are left out; repeat for several (127.0.0.1 is always excluded)",
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Log progress to stderr")
     return parser
 
@@ -491,7 +499,7 @@ def main(argument_list: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO if arguments.verbose else logging.WARNING, format=LOGGING_FORMAT)
     token = arguments.token_file.read_text(encoding=FILE_ENCODING).strip() if arguments.token_file else None
     try:
-        log = HoneypotLog.load(arguments.honeypot_file)
+        log = HoneypotLog.load(arguments.honeypot_file, excluded_ips=frozenset(arguments.exclude_ip))
         location_cache = IpLocationCache.load(arguments.cache_file, provider=IpInfoClient(token=token))
     except (OSError, ScoreboardError):
         logger.exception("Could not load the inputs")

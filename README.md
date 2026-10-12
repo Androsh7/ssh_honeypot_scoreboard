@@ -27,6 +27,7 @@ python ssh_honeypot_scoreboard.py -i ssh-honeypot.log -c ip-location.cache -o sc
 | `--top-passwords` | 25 | How many passwords to include overall |
 | `--top-usernames-per-ip` | 10 | How many usernames to list per address |
 | `--top-passwords-per-ip` | 10 | How many passwords to list per address |
+| `-x`, `--exclude-ip` | `127.0.0.1` | An address to leave out; repeat the flag for several. Loopback is always excluded |
 | `-v`, `--verbose` | off | Log progress to stderr |
 
 Locations come from https://ipinfo.io. Only the addresses on the scoreboard are looked up, and every answer is kept in the cache file, so repeated runs make no requests for addresses already seen. Without a token ipinfo.io allows roughly 1000 lookups per day, which is plenty for the default of 25. If you have a token, put it in a file on its own and pass `--token-file`; it is sent as a bearer header and never appears on the command line.
